@@ -1,9 +1,16 @@
 {
   "name": "inventoryapp",
-  "nodemonConfig": { 
+  "nodemonConfig": {
     "exec": "npm run dev",
-    "watch": ["server/*", "public/*"],
-    "ignore": ["**/__tests__/**", "*.test.js", "*.spec.js"]
+    "watch": [
+      "server/*",
+      "public/*"
+    ],
+    "ignore": [
+      "**/__tests__/**",
+      "*.test.js",
+      "*.spec.js"
+    ]
   },
   "scripts": {
     "start": "npm run prod",
@@ -29,6 +36,14 @@
   "babel": {
     "presets": [
       "@babel/preset-env"
-    ]
+    ],
+    "plugins": [
+      [
+        "@babel/plugin-proposal-class-properties"
+      ]
+  ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4"
   }
 }
