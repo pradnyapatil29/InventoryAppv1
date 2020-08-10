@@ -19,11 +19,11 @@ let rawdata = fs.readFileSync('inventoryData.json')
 let items = JSON.parse(rawdata);
 
 
-app.get("/items",(req,res)=>{
+router.get("/",(req,res)=>{
     res.send(items)
 })
 
-app.get("/items/:id",(req,res)=>{
+router.get("/:id",(req,res)=>{
     let itemID = req.params.id;
     console.log(req.params.id)
     let product = items.find((p)=>{return p.id == itemID});
@@ -32,7 +32,7 @@ app.get("/items/:id",(req,res)=>{
     res.send(product);
 })
 
-app.get("/itembyname/:name", (req, res) => {
+router.get("/itembyname/:name", (req, res) => {
     let itemName = req.params.name;
     let productList = [];
     items.forEach(item => {
@@ -43,11 +43,9 @@ app.get("/itembyname/:name", (req, res) => {
     res.send(productList);
 })
 
-app.post("/items",(req,res)=>{
+router.post("/",(req,res)=>{
     console.log("POST Request received!");
-
-    let item = new itemsClass.inventoryModel()
-    item = {
+    var item = new inventoryModel({
         id:req.body.id,
         itemsSpecification:req.body.itemsSpecification,
         dateOfOrder:new Date(req.body.dateOfOrder),
@@ -65,7 +63,7 @@ app.post("/items",(req,res)=>{
         //srNo:req.body.srNo,
         selectedUnit:req.body.selectedUnit,
         selectedPaymentMode:req.body.selectedPaymentMode
-    }
+    })
     item.totalBill = item.calculateTotalBill();
     
     items.push(item);
