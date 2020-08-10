@@ -45,25 +45,25 @@ router.get("/itembyname/:name", (req, res) => {
 
 router.post("/",(req,res)=>{
     console.log("POST Request received!");
-    var item = new inventoryModel({
-        id:req.body.id,
-        itemsSpecification:req.body.itemsSpecification,
-        dateOfOrder:new Date(req.body.dateOfOrder),
-        orderedBy:req.body.orderedBy,
-        deliveryDate:req.body.deliveryDate,
-        supervisedBy:req.body.supervisedBy,
-        quantity:req.body.quantity,
-        rate:req.body.rate,
-        //totalBill:parseDouble(req.body.totalBill),
-        gst:req.body.gst,
-        paidBy:req.body.paidBy,
-        paidAmount:req.body.paidAmount,
-        //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
-        paidRemarks:req.body.paidRemarks,
-        //srNo:req.body.srNo,
-        selectedUnit:req.body.selectedUnit,
-        selectedPaymentMode:req.body.selectedPaymentMode
-    })
+
+    let item = new inventoryModel()
+    item.id = req.body.id,
+    item.itemsSpecification = req.body.itemsSpecification,
+    item.dateOfOrder = new Date(req.body.dateOfOrder),
+    item.orderedBy = req.body.orderedBy,
+    item.deliveryDate = req.body.deliveryDate,
+    item.supervisedBy = req.body.supervisedBy,
+    item.quantity = req.body.quantity,
+    item.rate = req.body.rate,
+    //totalBill:parseDouble(req.body.totalBill),
+    item.gst = req.body.gst,
+    item.paidBy = req.body.paidBy,
+    item.paidAmount = req.body.paidAmount,
+    //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
+    item.paidRemarks = req.body.paidRemarks,
+    //srNo:req.body.srNo,
+    item.selectedUnit = req.body.selectedUnit,
+    item.selectedPaymentMode = req.body.selectedPaymentMode
     item.totalBill = item.calculateTotalBill();
     
     items.push(item);
