@@ -19,11 +19,11 @@ let rawdata = fs.readFileSync('inventoryData.json')
 let items = JSON.parse(rawdata);
 
 
-router.get("/",(req,res)=>{
+router.get("/items",(req,res)=>{
     res.send(items)
 })
 
-router.get("/:id",(req,res)=>{
+router.get("/items/:id",(req,res)=>{
     let itemID = req.params.id;
     console.log(req.params.id)
     let product = items.find((p)=>{return p.id == itemID});
