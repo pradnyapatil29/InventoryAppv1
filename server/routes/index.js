@@ -19,14 +19,14 @@ let rawdata = fs.readFileSync('inventoryData.json')
 let items = JSON.parse(rawdata);
 
 
-router.get("/items",(req,res)=>{
+router.get("/items", (req, res) => {
     res.send(items)
 })
 
-router.get("/items/:id",(req,res)=>{
+router.get("/items/:id", (req, res) => {
     let itemID = req.params.id;
     console.log(req.params.id)
-    let product = items.find((p)=>{return p.id == itemID});
+    let product = items.find((p) => { return p.id == itemID });
     let data = JSON.stringify(items);
     fs.writeFileSync('inventoryData.json', data);
     res.send(product);
@@ -43,29 +43,29 @@ router.get("/itembyname/:name", (req, res) => {
     res.send(productList);
 })
 
-router.post("/",(req,res)=>{
+router.post("/items", (req, res) => {
     console.log("POST Request received!");
 
     let item = new inventoryModel()
     item.id = req.body.id,
-    item.itemsSpecification = req.body.itemsSpecification,
-    item.dateOfOrder = new Date(req.body.dateOfOrder),
-    item.orderedBy = req.body.orderedBy,
-    item.deliveryDate = req.body.deliveryDate,
-    item.supervisedBy = req.body.supervisedBy,
-    item.quantity = req.body.quantity,
-    item.rate = req.body.rate,
-    //totalBill:parseDouble(req.body.totalBill),
-    item.gst = req.body.gst,
-    item.paidBy = req.body.paidBy,
-    item.paidAmount = req.body.paidAmount,
-    //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
-    item.paidRemarks = req.body.paidRemarks,
-    //srNo:req.body.srNo,
-    item.selectedUnit = req.body.selectedUnit,
-    item.selectedPaymentMode = req.body.selectedPaymentMode
+        item.itemsSpecification = req.body.itemsSpecification,
+        item.dateOfOrder = new Date(req.body.dateOfOrder),
+        item.orderedBy = req.body.orderedBy,
+        item.deliveryDate = req.body.deliveryDate,
+        item.supervisedBy = req.body.supervisedBy,
+        item.quantity = req.body.quantity,
+        item.rate = req.body.rate,
+        //totalBill:parseDouble(req.body.totalBill),
+        item.gst = req.body.gst,
+        item.paidBy = req.body.paidBy,
+        item.paidAmount = req.body.paidAmount,
+        //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
+        item.paidRemarks = req.body.paidRemarks,
+        //srNo:req.body.srNo,
+        item.selectedUnit = req.body.selectedUnit,
+        item.selectedPaymentMode = req.body.selectedPaymentMode
     item.totalBill = item.calculateTotalBill();
-    
+
     items.push(item);
     let data = JSON.stringify(items);
     fs.writeFileSync('inventoryData.json', data);
@@ -111,5 +111,25 @@ app.delete("/item/:id", (req, res) => {
     res.send(items);
     res.json({ message: `User ${itemID} deleted.` });
 })
+
+router.post("/itemList", (req, res) => {
+    console.log("POST Request received!");
+
+
+    let itemSpec = req.body.itemSpec;
+    let fromDate = new Date(req.body.fromDate);
+    let toDate = new Date(req.body.toDate);
+    console.log(itemSpec);
+
+    let itemList = items.filter((p) => {
+        return (fromDate <= (new Date(p.dateOfOrder)) &&
+            toDate >= (new Date(p.dateOfOrder)) &&
+            itemSpec == p.itemsSpecification)
+    });
+
+    // let data = JSON.stringify(items);
+    // fs.writeFileSync('inventoryData.json', data);
+    res.send(itemList);
+});
 
 export default router;
