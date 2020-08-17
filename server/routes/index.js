@@ -16,19 +16,18 @@ app.use(router);
 /* GET home page. */
 
 const MongoClient = require('mongodb').MongoClient
-MongoClient.connect('mongodb+srv://vinit:vinit@mongodb@cluster0.2lsv7.azure.mongodb.net/test', {useUnifiedTopology : true}, (err, client) => 
-{
+MongoClient.connect('mongodb+srv://vinit:vinit@mongodb@cluster0.2lsv7.azure.mongodb.net/test', { useUnifiedTopology: true }, (err, client) => {
     // ... do something here
     console.log('Connected to Database')
     const db = client.db('inventory-app-dp')
     const inventoryCollection = db.collection('inventories')
 
-    let rawdata = fs.readFileSync('inventoryData.json')
-    let items = JSON.parse(rawdata);
+    // let rawdata = fs.readFileSync('inventoryData.json')
+    //let items = JSON.parse(rawdata);
 
 
-    router.get("/items",(req,res)=>{
-        db.collection('inventories').find().toArray().then(items =>{
+    router.get("/items", (req, res) => {
+        db.collection('inventories').find().toArray().then(items => {
             res.send(items)
         })
     })
@@ -43,17 +42,18 @@ MongoClient.connect('mongodb+srv://vinit:vinit@mongodb@cluster0.2lsv7.azure.mong
     // })
 
     router.get("/items/:name", (req, res) => {
-        db.collection('inventories').find().toArray().then(items =>{
+        db.collection('inventories').find().toArray().then(items => {
             var itemName = req.params.name
-            
-            let item = items.find((i)=> {return i.itemsSpecification == itemName})
+
+            let item = items.find((i) => { return i.itemsSpecification == itemName })
             res.send(item)
         })
     })
 
-    router.post("/items",(req,res)=>{
+    router.post("/items", (req, res) => {
         console.log("POST Request received!");
         let item = new inventoryModel()
+        item.id = req.body.id
         item.itemsSpecification = req.body.itemsSpecification
         item.dateOfOrder = new Date(req.body.dateOfOrder)
         item.orderedBy = req.body.orderedBy
@@ -61,29 +61,44 @@ MongoClient.connect('mongodb+srv://vinit:vinit@mongodb@cluster0.2lsv7.azure.mong
         item.supervisedBy = req.body.supervisedBy
         item.quantity = req.body.quantity
         item.rate = req.body.rate
-        //totalBill:parseDouble(req.body.totalBill),
+            //totalBill:parseDouble(req.body.totalBill),
         item.gst = req.body.gst
         item.paidBy = req.body.paidBy
         item.paidAmount = req.body.paidAmount
-        //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
+            //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
         item.paidRemarks = req.body.paidRemarks
-        //srNo:req.body.srNo,
+            //srNo:req.body.srNo,
         item.selectedUnit = req.body.selectedUnit
         item.selectedPaymentMode = req.body.selectedPaymentMode
         item.totalBill = item.calculateTotalBill()
         item.pendingBillAmount = item.calculatePendingBill()
 
-        inventoryCollection.insertOne(item).then(result => {console.log(result)}).catch(error => console.error(error))
+        inventoryCollection.insertOne(item).then(result => { console.log(result) }).catch(error => console.error(error))
         res.send(item);
     });
 
-    router.put("/items/:id",(req,res)=>{
-        inventoryCollection.findOneAndUpdate(
-            {id : req.params.id},
-            update,
-            options
-        ).then(result => {}).catch(error => console.error(error))
-    })
+    router.put("/items/:id", (req, res) => {
+        var itemId = parseInt(req.params.id);
+
+        inventoryCollection.findOneAndUpdate({ id: itemId }, {
+
+                $set: {
+                    itemsSpecification: req.body.itemsSpecification,
+                    orderedBy: req.body.orderedBy
+                },
+            }, { returnOriginal: false }, {
+                upsert: true
+            }).then(result => {
+                res.send(result.value)
+                console.log(result)
+            })
+            .catch(error => console.error(error))
+            //     db.collection('inventories').find().toArray().then(items => {
+            //         res.send(items)
+            //    })'
+            // res.send(result)
+
+    });
 
     // router.put("/item/:name", (req, res) => {
     //     console.log("PUT Request received!");
@@ -125,8 +140,8 @@ MongoClient.connect('mongodb+srv://vinit:vinit@mongodb@cluster0.2lsv7.azure.mong
     //     res.json({ message: `User ${itemID} deleted.` });
     // })
 
-  })
-  
+})
+
 
 
 export default router;
