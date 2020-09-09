@@ -35,6 +35,39 @@ MongoClient.connect('mongodb+srv://vinit:vinit@mongodb@cluster0.2lsv7.azure.mong
         })
     })
 
+//Create ItemSave Function
+
+
+
+    router.post("/items",(req,res)=>{
+        console.log("POST Request received!");
+
+        //send req.body.requestItem to the create method,(created in inventory model)
+
+        let item = new inventoryModel()
+        item.itemsSpecification = req.body.itemsSpecification
+        item.dateOfOrder = new Date(req.body.dateOfOrder)
+        item.orderedBy = req.body.orderedBy
+        item.deliveryDate = new Date(req.body.deliveryDate)
+        item.supervisedBy = req.body.supervisedBy
+        item.quantity = req.body.quantity
+        item.rate = req.body.rate
+        //totalBill:parseDouble(req.body.totalBill),
+        item.gst = req.body.gst
+        item.paidBy = req.body.paidBy
+        item.paidAmount = req.body.paidAmount
+        //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
+        item.paidRemarks = req.body.paidRemarks
+        //srNo:req.body.srNo,
+        item.selectedUnit = req.body.selectedUnit
+        item.selectedPaymentMode = req.body.selectedPaymentMode
+        item.totalBill = item.calculateTotalBill()
+        item.pendingBillAmount = item.calculatePendingBill()
+
+        inventoryCollection.insertOne(item).then(result => {console.log(result)}).catch(error => console.error(error))
+        res.send(item);
+    });
+
   })
 
 
@@ -76,31 +109,31 @@ MongoClient.connect('mongodb+srv://vinit:vinit@mongodb@cluster0.2lsv7.azure.mong
 //         })
 //     })
 
-//     router.post("/items",(req,res)=>{
-//         console.log("POST Request received!");
-//         let item = new inventoryModel()
-//         item.itemsSpecification = req.body.itemsSpecification
-//         item.dateOfOrder = new Date(req.body.dateOfOrder)
-//         item.orderedBy = req.body.orderedBy
-//         item.deliveryDate = new Date(req.body.deliveryDate)
-//         item.supervisedBy = req.body.supervisedBy
-//         item.quantity = req.body.quantity
-//         item.rate = req.body.rate
-//         //totalBill:parseDouble(req.body.totalBill),
-//         item.gst = req.body.gst
-//         item.paidBy = req.body.paidBy
-//         item.paidAmount = req.body.paidAmount
-//         //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
-//         item.paidRemarks = req.body.paidRemarks
-//         //srNo:req.body.srNo,
-//         item.selectedUnit = req.body.selectedUnit
-//         item.selectedPaymentMode = req.body.selectedPaymentMode
-//         item.totalBill = item.calculateTotalBill()
-//         item.pendingBillAmount = item.calculatePendingBill()
+    // router.post("/items",(req,res)=>{
+    //     console.log("POST Request received!");
+    //     let item = new inventoryModel()
+    //     item.itemsSpecification = req.body.itemsSpecification
+    //     item.dateOfOrder = new Date(req.body.dateOfOrder)
+    //     item.orderedBy = req.body.orderedBy
+    //     item.deliveryDate = new Date(req.body.deliveryDate)
+    //     item.supervisedBy = req.body.supervisedBy
+    //     item.quantity = req.body.quantity
+    //     item.rate = req.body.rate
+    //     //totalBill:parseDouble(req.body.totalBill),
+    //     item.gst = req.body.gst
+    //     item.paidBy = req.body.paidBy
+    //     item.paidAmount = req.body.paidAmount
+    //     //pendingBillAmount:parseDouble(req.body.pendingBillAmount),
+    //     item.paidRemarks = req.body.paidRemarks
+    //     //srNo:req.body.srNo,
+    //     item.selectedUnit = req.body.selectedUnit
+    //     item.selectedPaymentMode = req.body.selectedPaymentMode
+    //     item.totalBill = item.calculateTotalBill()
+    //     item.pendingBillAmount = item.calculatePendingBill()
 
-//         inventoryCollection.insertOne(item).then(result => {console.log(result)}).catch(error => console.error(error))
-//         res.send(item);
-//     });
+    //     inventoryCollection.insertOne(item).then(result => {console.log(result)}).catch(error => console.error(error))
+    //     res.send(item);
+    // });
 
 //     // router.put("/items/:id",(req,res)=>{
 //     //     inventoryCollection.findOneAndUpdate(

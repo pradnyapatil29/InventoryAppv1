@@ -1,5 +1,7 @@
 class inventoryModel 
 {
+// create function and getAll talks to database
+
     constructor()
     {
         this.itemsSpecification;
